@@ -1,0 +1,30 @@
+# Versión alternativa: job que usa un cluster existente (debe ser cluster con UC y que tu usuario pueda usar).
+# No se incluye en el bundle. Para usarla: copiar a jobs.yml el bloque tasks con existing_cluster_id.
+#
+# Reemplaza CLUSTER_ID por el ID de un cluster compartido o cuyo single-user seas tú.
+resources:
+  jobs:
+    demo_mlops_job:
+      name: "[${bundle.target}] MLOps Demo - Generate Data & Train"
+      tasks:
+        - task_key: generate_synthetic_data
+          notebook_task:
+            notebook_path: ../src/notebooks/generate_synthetic_data.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+          existing_cluster_id: "CLUSTER_ID"
+        - task_key: train_model
+          depends_on:
+            - task_key: generate_synthetic_data
+          notebook_task:
+            notebook_path: ../src/notebooks/train_model.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+          existing_cluster_id: "CLUSTER_ID"
+      permissions:
+        - level: CAN_VIEW
+          group_name: users
+        - level: CAN_MANAGE_RUN
+          group_name: users

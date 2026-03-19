@@ -1,0 +1,13 @@
+# Crea el catálogo de Unity Catalog por ambiente.
+# Al hacer deploy -t dev se crea demo_mlops_aval_dev; con -t prod, demo_mlops_aval_prod.
+# Requiere CLI 0.287+ y motor de despliegue "direct" (databricks bundle deploy).
+resources:
+  catalogs:
+    demo_catalog:
+      name: ${var.catalog}
+      comment: "Catalog for MLOps demo - ${bundle.target}"
+      grants:
+        - principal: users
+          privileges:
+            - USE_CATALOG
+            - CREATE_SCHEMA

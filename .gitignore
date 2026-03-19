@@ -1,0 +1,15 @@
+# Bundle deployment state (local)
+.databricks/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.egg-info/
+
+# IDE / OS
+.idea/
+.DS_Store
+.cursor/

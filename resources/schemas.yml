@@ -1,0 +1,13 @@
+# Schema dentro del catálogo del target (dev o prod).
+resources:
+  schemas:
+    demo_schema:
+      name: ${var.schema}
+      catalog_name: ${var.catalog}
+      comment: "Schema for MLOps demo tables and model - ${bundle.target}"
+      grants:
+        - principal: users
+          privileges:
+            - USE_SCHEMA
+            - CREATE_TABLE
+            - CREATE_MODEL

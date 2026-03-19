@@ -1,0 +1,56 @@
+# Demo 1: Reentrenar en ambos ambientes. Demo 2: Solo promover modelo dev -> prod.
+# Cluster existente: 1026-193826-2w9u1jh0 (Unity Catalog, tu usuario debe poder usarlo).
+resources:
+  jobs:
+    # ----- Demo 1: Generar datos + entrenar en el ambiente del target (dev o prod) -----
+    demo_mlops_job:
+      name: "[${bundle.target}] MLOps Demo - Generate Data & Train"
+      tasks:
+        - task_key: generate_synthetic_data
+          notebook_task:
+            notebook_path: ../src/notebooks/generate_synthetic_data.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+          existing_cluster_id: "1026-193826-2w9u1jh0"
+        - task_key: train_model
+          depends_on:
+            - task_key: generate_synthetic_data
+          notebook_task:
+            notebook_path: ../src/notebooks/train_model.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+          existing_cluster_id: "1026-193826-2w9u1jh0"
+          libraries:
+            - pypi:
+                package: mlflow
+            - pypi:
+                package: scikit-learn
+      permissions:
+        - level: CAN_VIEW
+          group_name: users
+        - level: CAN_MANAGE_RUN
+          group_name: users
+
+    # ----- Demo 2: Promover solo el modelo (dev -> target, sin reentrenar) -----
+    promote_model_job:
+      name: "[${bundle.target}] MLOps Demo - Promote Model (dev -> target)"
+      tasks:
+        - task_key: promote_model
+          notebook_task:
+            notebook_path: ../src/notebooks/promote_model.py
+            base_parameters:
+              source_catalog: "demo_mlops_aval_dev"
+              target_catalog: ${var.catalog}
+              schema: ${var.schema}
+              model_alias: "Champion"
+          existing_cluster_id: "1026-193826-2w9u1jh0"
+          libraries:
+            - pypi:
+                package: mlflow
+      permissions:
+        - level: CAN_VIEW
+          group_name: users
+        - level: CAN_MANAGE_RUN
+          group_name: users
