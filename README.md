@@ -78,14 +78,6 @@ databricks bundle run promote_model_job -t prod
 
 El modelo en prod será una copia de la versión Champion de dev; en prod no se generan datos ni se entrena.
 
-## Guion sugerido para el cliente
-
-1. Explicar qué es un Asset Bundle y por qué usar un target por ambiente.
-2. Mostrar `databricks.yml`: variables `catalog`/`schema` y targets dev/prod.
-3. **Demo 1:** Desplegar, ejecutar `demo_mlops_job` en dev y en prod; mostrar que en cada ambiente se reentrena y se tiene modelo propio.
-4. **Demo 2:** Ejecutar `demo_mlops_job` solo en dev; luego ejecutar `promote_model_job` con `-t prod`; mostrar que en prod aparece el mismo modelo (Champion) sin haber entrenado en prod.
-5. Opcional: cambiar un hiperparámetro, reentrenar en dev, volver a ejecutar `promote_model_job -t prod` para actualizar prod.
-
 ## Notas
 
 - Si tu CLI no soporta el recurso `catalogs` o el motor directo, crea los catálogos a mano en la UI (o con SQL) con los nombres `demo_mlops_aval_dev` y `demo_mlops_aval_prod` y comenta/elimina el archivo `resources/catalogs.yml` y la referencia al schema desde el recurso de catálogo; sigue usando las variables `catalog` y `schema` en el job.
